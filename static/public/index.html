@@ -21,8 +21,8 @@
 <script src="tabs.js" defer></script>
 </head>
 
-<body>
-
+<body onload="load()">
+  <div style="display: none" id="myDiv">
   <div id="proxy-div" class="hide-proxy-div">
     <div id="proxy-nav-bar" class="w3-bar">
       <div class="w3-bar-item w3-bar" id="tabBarTabs">
@@ -45,7 +45,7 @@
 
     <div class="w3-display-right">
 
-      <a href="/games" class="navbar-link"><i class="fa fa-gamepad navbar-icon"></i></a>
+      <a href="games/" class="navbar-link"><i class="fa fa-gamepad navbar-icon"></i></a>
     </div>
   </div>
 
@@ -54,10 +54,26 @@
       <input id="uv-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
       <p class="title">FalconLink</p>
       <p class="subtitle">THE BEST WEB PROXY</p>
+      <div class="centerinput">
       <input id="uv-address" autocomplete="off" class="w3-input" type="text" placeholder="Search the web" />
+    </div>
     </form>
   </div>
   <script src="browser.js"></script>
-</body>
+  </div>
+  <div class="loadcenter">
+  <div class="loading-container" id="hide">
+    <div class="loading-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </div>
+  </div>
+</div>
+  </body>
 
 </html>

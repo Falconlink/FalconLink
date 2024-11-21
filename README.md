@@ -1,5 +1,7 @@
 <h2>FalconLink - A modern web proxy</h2>
 
+NOTE: This repo uses Ultraviolet 2. If you want to use version 3, use [this repo](https://github.com/BradleyLikesCoding/FalconLink-UV3). If you don't understand this message then you are probably fine with this version.
+
 <h3>Features:</h3>
 
 -4,000 games
@@ -8,7 +10,7 @@
 
 -Clean UI
 
--Developer console (We used eruda https://github.com/liriliri/eruda)
+-Developer console (I used eruda https://github.com/liriliri/eruda)
 
 -Browser with multiple tabs, back/forwards arrows, reload button, search/url bar, cloak in about:blank page in new tab, and fullscreen
 
