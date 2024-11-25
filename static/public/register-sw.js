@@ -23,8 +23,10 @@ async function registerSW() {
 
     throw new Error("Your browser doesn't support service workers.");
   }
-  
-  await navigator.serviceWorker.register(stockSW, {
-    scope: __uv$config.prefix,
-  });
+  const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+
+  // Register the EpoxyClient transport to be used for network requests
+  let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+  await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+  await navigator.serviceWorker.register(stockSW);
 }

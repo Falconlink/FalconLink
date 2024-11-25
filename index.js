@@ -2,12 +2,12 @@ import express from "express";
 import { createServer } from "node:http";
 import { publicPath } from "ultraviolet-static";
 import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
+import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
+import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import { join } from "node:path";
 import { hostname } from "node:os";
-import { createBareServer } from "@nebula-services/bare-server-node";
+import wisp from "wisp-server-node"
 import proxy from "express-http-proxy";
-
-const bare = createBareServer("/bare/");
 
 const app = express();
 
@@ -20,6 +20,8 @@ app.use(express.static(publicPath));
 // Load vendor files last.
 // The vendor's uv.config.js won't conflict with our uv.config.js inside the publicPath directory.
 app.use("/uv/", express.static(uvPath));
+app.use("/epoxy/", express.static(epoxyPath));
+app.use("/baremux/", express.static(baremuxPath));
 
 // Error for everything else
 app.use((req, res) => {
@@ -30,19 +32,16 @@ app.use((req, res) => {
 const server = createServer();
 
 server.on("request", (req, res) => {
-  if (bare.shouldRoute(req)) {
-    bare.routeRequest(req, res);
-  } else {
-    app(req, res);
-  }
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  app(req, res);
 });
 
 server.on("upgrade", (req, socket, head) => {
-  if (bare.shouldRoute(req)) {
-    bare.routeUpgrade(req, socket, head);
-  } else {
+  if (req.url.endsWith("/wisp/"))
+    wisp.routeRequest(req, socket, head);
+  else
     socket.end();
-  }
 });
 
 let port = parseInt(process.env.PORT || "");
@@ -70,7 +69,6 @@ process.on("SIGTERM", shutdown);
 function shutdown() {
   console.log("SIGTERM signal received: closing HTTP server");
   server.close();
-  bare.close();
   process.exit(0);
 }
 
