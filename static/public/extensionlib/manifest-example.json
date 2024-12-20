@@ -1,6 +1,7 @@
 {
     "version": "1",
     "icon": "icon.png",
+    "id": 123,
     "name": "Cool Extension",
     "images": [
         "image1.png",
