@@ -1,5 +1,55 @@
 const API = {
-  "id": EXTENSION_ID
+  "id": EXTENSION_ID,
+
+  "MessageChannel": class MessageChannel {
+    constructor(messageID) {
+      this.ext_id = API.id;
+      this.id = messageID;
+
+      this.listenForMessages();
+    }
+
+    listenForMessages() {
+      window.addEventListener("message", (event) => {
+        try {
+          if (event.data.messageID === this.id && event.data.action === "message_main_script") {
+            this.onMessage(event.data.value);
+          }
+        } catch (err) {
+          return;
+        }
+      })
+    }
+
+    sendMessage(value) {
+      window.parent.parent.postMessage({
+        "messageID": this.id,
+        "extID": this.ext_id,
+        "action": "message_content_script",
+        "value": value
+      }, "*");
+    }
+
+    onMessage(message) {
+      return;
+    }
+  },
+
+  "onMessageChannelCreate": (channel) => {
+    return;
+  },
+
+  "listenForMessages": () => {
+    window.addEventListener("message", (event) => {
+      const messageData = event.data;
+      switch (messageData.action) {
+        case ("create_channel"):
+          API.onMessageChannelCreate(new API.MessageChannel(messageData.messageID));
+          break;
+      }
+    });
+  }
+
 }
 
 function register_api_functions() {
@@ -34,4 +84,5 @@ function register_api_functions() {
   }
 }
 
+API.listenForMessages();
 register_api_functions();

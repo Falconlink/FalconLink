@@ -9,11 +9,12 @@ class Extension {
             throw new Error(`Tried to fetch extension manifest. Response status: ${response.status}`);
         }
 
+        this.channels = {};
         const json = await response.json();
         this.ext = json;
 
         const iframe = document.createElement("iframe");
-        iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${ JSON.stringify(Object.keys(this.api)) }</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
+        iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
         iframe.style.display = "none";
         this.iframe = iframe;
         document.body.append(iframe);
@@ -21,7 +22,7 @@ class Extension {
         this.listenForAPICalls();
     }
 
-    sendMessage(action, value, id = Date.now()) {
+    sendFunctionResponse(action, value, id = Date.now()) {
         this.iframe.contentWindow.postMessage({
             "messageID": id,
             "action": action,
@@ -36,11 +37,35 @@ class Extension {
                 switch (messageData.action) {
                     case ("function"):
                         try {
-                            this.sendMessage("function_response", this.api[messageData.function](this.ext, ...messageData.args), messageData.messageID);
+                            this.sendFunctionResponse("function_response", this.api[messageData.function](this.ext, ...messageData.args), messageData.messageID);
                         }
                         catch (err) {
-                            this.sendMessage("function_response", "Error: " + err.message, messageData.messageID);
+                            this.sendFunctionResponse("function_response", "Error: " + err.message, messageData.messageID);
                         }
+                        break;
+                    case ("create_channel"):
+                        this.iframe.contentWindow.postMessage({
+                            "action": "create_channel",
+                            "messageID": messageData.messageID
+                        }, "*");
+                        this.channels[messageData.messageID] = event.source;
+                        break;
+                    case ("message_content_script"):
+                        this.channels[messageData.messageID].postMessage({
+                            "messageID": messageData.messageID,
+                            "extID": this.ext.id,
+                            "action": "message_content_script",
+                            "value": messageData.value
+                        }, "*")
+                        break;
+                    case ("message_main_script"):
+                        this.iframe.contentWindow.postMessage({
+                            "messageID": messageData.messageID,
+                            "extID": this.ext.id,
+                            "action": "message_main_script",
+                            "value": messageData.value
+                        }, "*")
+                        break;
                 }
             }
         });
@@ -124,25 +149,32 @@ class Extension {
             var frame = document.getElementById("frame" + id).contentDocument.getElementById("uv-frame");
             var title = frame.contentDocument.title;
 
-            return({
+            return ({
                 "url": decodeUrl(document.getElementById("frame" + id).contentDocument.getElementById("uv-frame").contentWindow.location.href),
                 "id": id,
                 "title": title
             })
         },
 
-        createTab: function (ext, url, proxy=true) {
-            if(proxy) {
-                newTab(location.origin + "/uv/service/" + __$uvconfig.encodeUrl(url));
+        createTab: function (ext, url, proxy = true) {
+            if (proxy) {
+                newTab(location.origin + "/uv/service/" + __uv$config.encodeUrl(url));
             } else {
                 newTab(url);
             }
             return currentTab;
         },
 
-        injectScript: function(ext, script, tabID, inline=false) {
+        injectScript: function (ext, script, tabID, inline = false) {
+            var frame = document.getElementById("frame" + tabID).contentDocument.getElementById("uv-frame");
+            var scriptEl = frame.contentDocument.querySelector('script[src="' + location.origin + '/extensionlib/content_script.js"]');
+            if (!scriptEl) {
+                var scriptEl = document.createElement("script");
+                scriptEl.src = location.origin + '/extensionlib/content_script.js'
+                frame.contentDocument.body.appendChild(scriptEl);
+            }
+
             try {
-                var frame = document.getElementById("frame" + tabID).contentDocument.getElementById("uv-frame");
                 var scriptEl = document.createElement("script");
                 if (inline) {
                     scriptEl.innerHTML = script;
@@ -150,15 +182,17 @@ class Extension {
                 } else {
                     scriptEl.src = script;
                 }
+                scriptEl.setAttribute("ext_id", ext.id);
                 frame.contentDocument.body.appendChild(scriptEl);
 
                 return true;
             } catch (err) {
+                throw(err);
                 return "Error: " + err.message;
             }
         },
 
-        isScriptInjected(ext, script, tabID, inline=false) {
+        isScriptInjected(ext, script, tabID, inline = false) {
             var frame = document.getElementById("frame" + tabID).contentDocument.getElementById("uv-frame");
             if (inline) {
                 const scripts = frame.contentDocument.querySelectorAll('script[class="extension-' + ext.id + '-script"]');
