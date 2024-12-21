@@ -107,6 +107,16 @@ async function startProxy() {
 
     let queryString = new URLSearchParams(window.location.search);
     var url = queryString.get("page");
+
+    var proxy = queryString.get("proxy");
+    if(proxy === "false") {
+        let frame = document.getElementById("uv-frame");
+        frame.src = url;
+        document.getElementById("nav-bar-address").value = "";
+        document.getElementById("https-lock").innerText = "pending";
+        return;
+    }
+
     if(url) {
         let frame = document.getElementById("uv-frame");
         frame.src = __uv$config.prefix + encodeURIComponent(url);

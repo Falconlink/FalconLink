@@ -8,10 +8,4 @@ async function injectAdBlocker() {
     }
 }
 
-API.onMessageChannelCreate = (channel) => {
-    channel.onMessage = (message) => {
-        alert("We have a message!!!: " + message);
-    };
-}
-
 setInterval(injectAdBlocker, 1000);

@@ -71,6 +71,12 @@ class Extension {
         });
     }
 
+    iconClicked() {
+        this.iframe.contentWindow.postMessage({
+            "action": "icon_clicked"
+        }, "*")
+    }
+
     api = {
         getSrcFor: function (ext, path) {
             path = (path[0] == "/" ? "" : "/") + path; //add "/" to beggining of path if it isnt there
@@ -158,9 +164,9 @@ class Extension {
 
         createTab: function (ext, url, proxy = true) {
             if (proxy) {
-                newTab(location.origin + "/uv/service/" + __uv$config.encodeUrl(url));
+                newTab("/tab?page=" + __uv$config.encodeUrl(url));
             } else {
-                newTab(url);
+                newTab("/tab?proxy=false&page=" + url);
             }
             return currentTab;
         },
@@ -187,7 +193,7 @@ class Extension {
 
                 return true;
             } catch (err) {
-                throw(err);
+                //throw(err);
                 return "Error: " + err.message;
             }
         },
@@ -206,6 +212,10 @@ class Extension {
                 if (scriptEl) return true;
             }
             return false;
+        },
+
+        getWindowById(ext, tabID) {
+            return document.getElementById("frame" + tabID).contentDocument.getElementById("uv-frame").contentWindow;
         }
     }
 }

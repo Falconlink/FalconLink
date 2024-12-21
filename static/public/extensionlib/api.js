@@ -35,6 +35,10 @@ const API = {
     }
   },
 
+  "onIconClicked": () => {
+    return;
+  },
+
   "onMessageChannelCreate": (channel) => {
     return;
   },
@@ -45,6 +49,9 @@ const API = {
       switch (messageData.action) {
         case ("create_channel"):
           API.onMessageChannelCreate(new API.MessageChannel(messageData.messageID));
+          break;
+        case ("icon_clicked"):
+          API.onIconClicked();
           break;
       }
     });
