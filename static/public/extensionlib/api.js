@@ -1,28 +1,37 @@
 const API = {
-    
+  "id": EXTENSION_ID
 }
 
-for (var i = 0; i < API_FUNCTIONS.length; i++) {
-    API[API_FUNCTIONS[i]] = function(args) {
-        return new Promise((resolve, reject) => {
-            const messageId = Date.now();
-        
-            function handleMessage(event) {
-        
-              if (event.data.messageID === messageId) {
-                window.removeEventListener('message', handleMessage);
-                resolve(event.data.value);
-              }
-            }
-        
-            window.addEventListener('message', handleMessage);
-        
-            window.postMessage({
-                "messageID": messageId,
-                "type": "function",
-                "value": API_FUNCTIONS[i],
-                "args": args
-            }, "*");
-          });
+function register_api_functions() {
+  for (let i = 0; i < API_FUNCTIONS.length; i++) {
+    API[API_FUNCTIONS[i]] = function () {
+      return new Promise((resolve, reject) => {
+        const messageId = Date.now();
+        const timeout = setTimeout(() => {
+          resolve(undefined);
+        }, 2000);
+
+        function handleMessage(event) {
+
+          if (event.data.messageID === messageId && event.data.action === "function_response") {
+            window.removeEventListener('message', handleMessage);
+            clearTimeout(timeout);
+            resolve(event.data.value);
+          }
+        }
+
+        window.parent.postMessage({
+          "messageID": messageId,
+          "action": "function",
+          "function": API_FUNCTIONS[i],
+          "args": [...arguments],
+          "extID": API.id
+        }, "*");
+
+        window.addEventListener('message', handleMessage);
+      });
     }
+  }
 }
+
+register_api_functions();

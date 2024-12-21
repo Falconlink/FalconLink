@@ -13,15 +13,18 @@ class Extension {
         this.ext = json;
 
         const iframe = document.createElement("iframe");
-        iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${ JSON.stringify(Object.keys(this.api)) }</script><script defer src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
+        iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${ JSON.stringify(Object.keys(this.api)) }</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
         iframe.style.display = "none";
+        this.iframe = iframe;
         document.body.append(iframe);
+
+        this.listenForAPICalls();
     }
 
-    sendMessage(type, value, id = Date.now()) {
-        window.postMessage({
+    sendMessage(action, value, id = Date.now()) {
+        this.iframe.contentWindow.postMessage({
             "messageID": id,
-            "type": type,
+            "action": action,
             "value": value
         }, "*");
     }
@@ -33,23 +36,23 @@ class Extension {
                 switch (messageData.action) {
                     case ("function"):
                         try {
-                            this.sendMessage("function_response", this.api[messageData.function](...messageData.args), messageData.messageID);
+                            this.sendMessage("function_response", this.api[messageData.function](this.ext, ...messageData.args), messageData.messageID);
                         }
                         catch (err) {
-                            this.sendMessage("function_response", "Error: " + err.message + messageData.messageID);
+                            this.sendMessage("function_response", "Error: " + err.message, messageData.messageID);
                         }
                 }
             }
-        })
+        });
     }
 
     api = {
-        getSrcFor: function (path) {
-            path += path[0] == "/" ? "" : "/"; //add "/" to beggining of path if it isnt there
-            return window.location.origin + "/extensions/" + this.ext.id + path;
+        getSrcFor: function (ext, path) {
+            path = (path[0] == "/" ? "" : "/") + path; //add "/" to beggining of path if it isnt there
+            return window.location.origin + "/extensions/" + ext.id + path;
         },
 
-        getCurrentTab: function () {
+        getCurrentTab: function (ext) {
             function decodeUrl(str) {
                 if (!str) return str;
                 str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
@@ -74,7 +77,7 @@ class Extension {
             })
         },
 
-        getAllTabs: function () {
+        getAllTabs: function (ext) {
             var tabs = [];
             for (var i = 0; i < tabIds.length; i++) {
                 function decodeUrl(str) {
@@ -103,7 +106,7 @@ class Extension {
             return tabs;
         },
 
-        getTabByID: function (id) {
+        getTabByID: function (ext, id) {
             function decodeUrl(str) {
                 if (!str) return str;
                 str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
@@ -128,7 +131,7 @@ class Extension {
             })
         },
 
-        createTab: function (url, proxy=true) {
+        createTab: function (ext, url, proxy=true) {
             if(proxy) {
                 newTab(location.origin + "/uv/service/" + __$uvconfig.encodeUrl(url));
             } else {
@@ -137,21 +140,38 @@ class Extension {
             return currentTab;
         },
 
-        injectScript: function(script, tabID, inline=false) {
+        injectScript: function(ext, script, tabID, inline=false) {
             try {
                 var frame = document.getElementById("frame" + tabID).contentDocument.getElementById("uv-frame");
-                var script = document.createElement("script");
+                var scriptEl = document.createElement("script");
                 if (inline) {
-                    script.innerHTML = script;
+                    scriptEl.innerHTML = script;
+                    scriptEl.classList.add("extension-" + ext.id + "-script");
                 } else {
-                    script.src = script
+                    scriptEl.src = script;
                 }
-                frame.contentDocument.body.appendElement(script);
+                frame.contentDocument.body.appendChild(scriptEl);
 
                 return true;
             } catch (err) {
-                return false;
+                return "Error: " + err.message;
             }
+        },
+
+        isScriptInjected(ext, script, tabID, inline=false) {
+            var frame = document.getElementById("frame" + tabID).contentDocument.getElementById("uv-frame");
+            if (inline) {
+                const scripts = frame.contentDocument.querySelectorAll('script[class="extension-' + ext.id + '-script"]');
+                scripts.forEach((scriptEl) => {
+                    if (scriptEl.innerHTML == script) {
+                        return true;
+                    }
+                });
+            } else {
+                const scriptEl = frame.contentDocument.querySelector('script[src="' + script + '"]');
+                if (scriptEl) return true;
+            }
+            return false;
         }
     }
 }
