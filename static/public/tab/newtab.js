@@ -7,6 +7,7 @@ form.addEventListener("submit", async (event) => {
   
     const url = search(address.value, searchEngine.value);
     address.value = "";
-  
-    location.href = "/tab?page=" + __uv$config.encodeUrl(url);
+
+    window.parent.isProxied = true;
+    location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
   });

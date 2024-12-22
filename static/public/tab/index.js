@@ -1,3 +1,5 @@
+var isProxied = true;
+
 if (window.parent.location.pathname.startsWith("/games") || window.parent.location.pathname.startsWith("/apps")) {
     document.getElementById("homeButton").style.display = "block";
 }
@@ -41,14 +43,14 @@ document.getElementById("uv-frame").onload = function () {
 }
 
 setInterval(updateURLBar, 250);
- 
+
 function updateURLBar() {
-    if (document.activeElement.id != "nav-bar-address" || lastURL != decodeUV(document.getElementById("uv-frame").contentWindow.location.href)) {
-        lastURL = decodeUV(document.getElementById("uv-frame").contentWindow.location.href);
+    if (document.activeElement.id != "nav-bar-address" || lastURL != getTabURL()) {
+        lastURL = getTabURL();
         if (document.getElementById("uv-frame").contentWindow.location.href == "about:blank") {
             document.getElementById("nav-bar-address").value = "about:blank";
         } else {
-            document.getElementById("nav-bar-address").value = decodeUV(document.getElementById("uv-frame").contentWindow.location.href);
+            document.getElementById("nav-bar-address").value = getTabURL();
             if (document.getElementById("nav-bar-address").value.startsWith("https://")) {
                 document.getElementById("https-lock").innerText = "lock";
             } else if (document.getElementById("nav-bar-address").value.startsWith("http://")) {
@@ -60,18 +62,22 @@ function updateURLBar() {
     }
 }
 
-function decodeUV(str) {
-    if (!str) return str;
-    str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
-    return decodeURIComponent(
-        str
-            .toString()
-            .split('')
-            .map((char, ind) =>
-                ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char
-            )
-            .join('')
-    );
+function getTabURL() {
+    str = document.getElementById("uv-frame").contentWindow.location.href;
+    if (isProxied) {
+        str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
+        return decodeURIComponent(
+            str
+                .toString()
+                .split('')
+                .map((char, ind) =>
+                    ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char
+                )
+                .join('')
+        );
+    } else {
+        return str;
+    }
 }
 
 function windowPopout() {
@@ -109,7 +115,8 @@ async function startProxy() {
     var url = queryString.get("page");
 
     var proxy = queryString.get("proxy");
-    if(proxy === "false") {
+    if (proxy === "false") {
+        isProxied = false;
         let frame = document.getElementById("uv-frame");
         frame.src = url;
         document.getElementById("nav-bar-address").value = "";
@@ -117,7 +124,7 @@ async function startProxy() {
         return;
     }
 
-    if(url) {
+    if (url) {
         let frame = document.getElementById("uv-frame");
         frame.src = __uv$config.prefix + encodeURIComponent(url);
         document.getElementById("nav-bar-address").value = "";

@@ -84,25 +84,12 @@ class Extension {
         },
 
         getCurrentTab: function (ext) {
-            function decodeUrl(str) {
-                if (!str) return str;
-                str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
-                return decodeURIComponent(
-                    str
-                        .toString()
-                        .split('')
-                        .map((char, ind) =>
-                            ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char
-                        )
-                        .join('')
-                );
-            }
-
+            var url = document.getElementById("frame" + currentTab).contentWindow.getTabURL();
             var frame = document.getElementById("frame" + currentTab).contentDocument.getElementById("uv-frame");
             var title = frame.contentDocument.title;
 
             return ({
-                "url": decodeUrl(document.getElementById("frame" + currentTab).contentDocument.getElementById("uv-frame").contentWindow.location.href),
+                "url": url,
                 "id": currentTab,
                 "title": title
             })
@@ -111,25 +98,12 @@ class Extension {
         getAllTabs: function (ext) {
             var tabs = [];
             for (var i = 0; i < tabIds.length; i++) {
-                function decodeUrl(str) {
-                    if (!str) return str;
-                    str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
-                    return decodeURIComponent(
-                        str
-                            .toString()
-                            .split('')
-                            .map((char, ind) =>
-                                ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char
-                            )
-                            .join('')
-                    );
-                }
-
+                var url = document.getElementById("frame" + currentTab).contentWindow.getTabURL();
                 var frame = document.getElementById("frame" + tabIds[i]).contentDocument.getElementById("uv-frame");
                 var title = frame.contentDocument.title;
 
                 tabs.push({
-                    "url": decodeUrl(document.getElementById("frame" + tabIds[i]).contentDocument.getElementById("uv-frame").contentWindow.location.href),
+                    "url": url,
                     "id": tabIds[i],
                     "title": title
                 })
@@ -138,25 +112,12 @@ class Extension {
         },
 
         getTabByID: function (ext, id) {
-            function decodeUrl(str) {
-                if (!str) return str;
-                str = decodeURIComponent(str.substring(str.lastIndexOf('/') + 1));
-                return decodeURIComponent(
-                    str
-                        .toString()
-                        .split('')
-                        .map((char, ind) =>
-                            ind % 2 ? String.fromCharCode(char.charCodeAt() ^ 2) : char
-                        )
-                        .join('')
-                );
-            }
-
+            var url = document.getElementById("frame" + currentTab).contentWindow.getTabURL();
             var frame = document.getElementById("frame" + id).contentDocument.getElementById("uv-frame");
             var title = frame.contentDocument.title;
 
             return ({
-                "url": decodeUrl(document.getElementById("frame" + id).contentDocument.getElementById("uv-frame").contentWindow.location.href),
+                "url": url,
                 "id": id,
                 "title": title
             })

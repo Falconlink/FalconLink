@@ -2,7 +2,7 @@ var currentTabId = 0;
 var currentTab = 0;
 var tabIds = [];
 
-function newTab(url = "/tab/newtab.html") {
+function newTab(url = "/tab?proxy=false&page=/tab/newtab.html") {
   var el = document.getElementById("tabBarTabs");
   var tabId = getTabId();
   el.innerHTML += `<div class="tabBarTab w3-bar-item" id="tab` + tabId + `" style="width: 225px" onclick="openTab(` + tabId + `)">
