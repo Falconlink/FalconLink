@@ -3,6 +3,18 @@ var isProxied = true;
 if (window.parent.location.pathname.startsWith("/games") || window.parent.location.pathname.startsWith("/apps")) {
     document.getElementById("homeButton").style.display = "block";
 }
+function toggle() {
+  var dropdownContent = document.querySelector(".dropdown-content");
+  if (dropdownContent.style.visibility === "visible") {
+    dropdownContent.style.visibility = "hidden";
+    dropdownContent.style.opacity = 0;
+    dropdownContent.style.transform = "translateY(-20px)";
+  } else {
+    dropdownContent.style.visibility = "visible";
+    dropdownContent.style.opacity = 1;
+    dropdownContent.style.transform = "translateY(0)";
+  }
+}
 
 function openEruda() {
     const iframe = document.getElementById("uv-frame");
