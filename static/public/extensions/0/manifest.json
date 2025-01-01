@@ -2,6 +2,7 @@
     "version": "1",
     "id": 0,
     "name": "Screen Spinner",
+    "popup": "index.html",
     "script": "index.js",
     "images": [],
     "icon": "about:blank"

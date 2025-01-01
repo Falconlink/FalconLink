@@ -55,8 +55,22 @@ const API = {
           break;
       }
     });
-  }
+  },
 
+  "showPopup": () => {
+      console.log("showing popup");
+      window.parent.postMessage({
+        "ext_id": API.id,
+        "action": "show_popup"
+      }, "*");
+  },
+
+  "hidePopup": () => {
+      window.parent.postMessage({
+        "ext_id": API.id,
+        "action": "hide_popup"
+      }, "*");
+  }
 }
 
 function register_api_functions() {

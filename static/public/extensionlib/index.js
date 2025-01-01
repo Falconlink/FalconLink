@@ -14,12 +14,33 @@ class Extension {
         this.ext = json;
 
         const iframe = document.createElement("iframe");
-        iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
-        iframe.style.display = "none";
-        this.iframe = iframe;
-        document.body.append(iframe);
 
+        if (this.ext.popup) {
+            iframe.src = this.api.getSrcFor(this.ext, this.ext.popup);
+            iframe.onload = (event) => {
+                event.target.contentDocument.body.appendChild(document.createElement("script")).innerHTML = `const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}`;
+                event.target.contentDocument.body.appendChild(document.createElement("script")).src = "/extensionlib/api.js";
+                event.target.contentDocument.body.appendChild(document.createElement("script")).src = location.origin + "/extensions/" + this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script;
+            }
+        } else {
+            iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
+        }
+        iframe.classList.add("extension-iframe");
+        iframe.classList.add("hide");
+        iframe.classList.add("w3-card");
+        this.iframe = iframe;
+        document.getElementById("extensions-container").append(iframe);
+
+        setInterval(this.resizePopup, 1000);
+        this.iframe.contentWindow.addEventListener("resize", this.resizePopup);
+        window.addEventListener("resize", this.resizePopup);
         this.listenForAPICalls();
+    }
+
+    resizePopup() { 
+        if (this.iframe.classList.contains("hide")) return;
+        this.iframe.style.width = this.iframe.contentDocument.body.scrollWidth + "px";
+        this.iframe.style.height = this.iframe.contentDocument.body.scrollHeight + "px";
     }
 
     sendFunctionResponse(action, value, id = Date.now()) {
@@ -28,6 +49,16 @@ class Extension {
             "action": action,
             "value": value
         }, "*");
+    }
+
+    showExtPopup() {
+        this.iframe.classList.remove("hide");
+        this.iframe.classList.add("show");
+    }
+
+    hideExtPopup() {
+        this.iframe.classList.add("hide");
+        this.iframe.classList.remove("show");
     }
 
     listenForAPICalls() {
@@ -65,6 +96,12 @@ class Extension {
                             "action": "message_main_script",
                             "value": messageData.value
                         }, "*")
+                        break;
+                    case ("show_popup"):
+                        this.showExtPopup();
+                        break; 
+                    case ("hide_popup"):    
+                        this.hideExtPopup();
                         break;
                 }
             }

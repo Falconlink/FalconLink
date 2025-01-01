@@ -9,3 +9,5 @@ async function injectAdBlocker() {
 }
 
 setInterval(injectAdBlocker, 1000);
+
+API.showPopup();
