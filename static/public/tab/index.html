@@ -5,7 +5,7 @@
        crossorigin="anonymous"></script>
        
     <title>FalconLink</title>
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=extension" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Freeman&display=swap" rel="stylesheet">
@@ -54,10 +54,12 @@
             onclick="window.top.postMessage('goHome', '*')">
             <i class="material-icons">home</i>
         </div>
+        
         <div class="w3-bar-item proxy-nav-bar-item" style="float: right; cursor: pointer; padding: 8px;"
             onclick="windowPopout();">
             <i class="material-icons">open_in_new</i>
         </div>
+        
         <div class="w3-bar-item proxy-nav-bar-item" style="float: right; cursor: pointer; padding: 8px;"
             onclick="openEruda();">
             <i class="material-icons">code</i>
@@ -66,6 +68,20 @@
             onclick="proxyFullscreen();">
             <i class="material-icons">fullscreen</i>
         </div>
+        <div class="w3-bar-item proxy-nav-bar-item" style="float: right; cursor: pointer; padding: 8px; " onclick="toggle()">
+            <script>
+                
+            </script>
+            <div class="dropdown">
+                <i class="material-icons">extension</i>
+                <div class="dropdown-content">
+                  <a onclick="">Barrel Roll</a>
+                  <a onclick="">Ad Blocker</a>
+                  <a onclick="">idk</a>
+                </div>
+              </div>              
+        </div>
+
     </div>
     <iframe id="uv-frame"></iframe>
 </body>
