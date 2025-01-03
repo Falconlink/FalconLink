@@ -13,28 +13,29 @@ class Extension {
         const json = await response.json();
         this.ext = json;
 
-        const iframe = document.createElement("iframe");
+        this.iframe = document.createElement("iframe");
 
         if (this.ext.popup) {
-            iframe.src = this.api.getSrcFor(this.ext, this.ext.popup);
-            iframe.onload = (event) => {
+            this.iframe.src = this.api.getSrcFor(this.ext, this.ext.popup);
+            this.iframe.onload = (event) => {
                 event.target.contentDocument.body.appendChild(document.createElement("script")).innerHTML = `const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}`;
                 event.target.contentDocument.body.appendChild(document.createElement("script")).src = "/extensionlib/api.js";
                 event.target.contentDocument.body.appendChild(document.createElement("script")).src = location.origin + "/extensions/" + this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script;
             }
         } else {
-            iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
+            this.iframe.srcdoc = `<!DOCTYPE HTML><html><head><script>const EXTENSION_ID = ${this.ext.id}; const API_FUNCTIONS = ${JSON.stringify(Object.keys(this.api))}</script><script src="/extensionlib/api.js"></script></head><body><script src="${location.origin}/extensions/${this.ext.id + (this.ext.script[0] == "/" ? "" : "/") + this.ext.script}"/></script></body></html>`;
         }
-        iframe.classList.add("extension-iframe");
-        iframe.classList.add("hide");
-        iframe.classList.add("w3-card");
-        this.iframe = iframe;
-        document.getElementById("extensions-container").append(iframe);
+        this.iframe.classList.add("extension-iframe");
+        this.iframe.classList.add("hide");
+        this.iframe.classList.add("w3-card");
+        
+        document.getElementById("extensions-container").append(this.iframe);
 
         setInterval(this.resizePopup, 1000);
         this.iframe.contentWindow.addEventListener("resize", this.resizePopup);
         window.addEventListener("resize", this.resizePopup);
         this.listenForAPICalls();
+        this.showExtPopup();
     }
 
     resizePopup() { 
@@ -52,6 +53,7 @@ class Extension {
     }
 
     showExtPopup() {
+        console.log(this);
         this.iframe.classList.remove("hide");
         this.iframe.classList.add("show");
     }
