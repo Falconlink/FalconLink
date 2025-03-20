@@ -35,58 +35,56 @@ const educationalSites = [
 ];
 const colorThemes = {
   default: [
-    "rgb(19, 20, 31)", //primary
-    "rgb(15, 16, 25)", //secondary
-    "rgba(82, 35, 163, 0.5)", //effects
+    "rgb(28, 21, 48)", //primary
+    "rgb(17,21,48)", //secondary
+    "rgb(82, 35, 163)", //effects
     "#e9f1f7", //h1
     "#cccdce", //text
-    "rgba(188, 152, 252, 0.5)", //line
+    "rgb(9, 43, 95)", //gradient
   ],
   legacy: [
-    "rgb(56, 67, 73)",
+    "rgb(72, 77, 80)",
     "rgb(29, 30, 34)",
     "rgba(220, 204, 255, 0.5)",
     "#e9f1f7",
     "#cccdce",
-    "rgba(209, 200, 228, 0.5)",
+    "rgb(64, 91, 105)",
   ],
   noctura: [
-    "#0d0d1a",
+    "rgba(13, 13, 26, 1)",
     "#1a1a4d",
-    "rgba(26, 26, 255, 0.7)",
+    "rgba(68, 68, 211, 0.7)",
     "#6666ff",
-    "#1a1aff",
+    "#3030DB",
+    "rgb(25, 25, 61)",
   ],
   crimson: [
-    "#330000",
+    "rgba(51, 0, 0, 1)",
     "#660000",
     "rgba(220, 20, 60, 0.7)",
     "#ff8a8a",
     "#dc143c",
-  ],
-  strawberry: [
-    "rgb(144, 78, 85)",
-    "rgb(106, 78, 85)",
-    "rgba(242, 239, 233)",
-    "#e9f1f7",
-    "#cccdce",
+    "rgb(77, 32, 24)",
   ],
   cafe: [
-    "#D6C0B3",
+    "rgb(197, 177, 165)",
     "#AB886D",
     "#493628",
     "#493628",
     "#493628",
+    "rgb(161, 138, 124)",
   ],
   retro: [
-    "#000000",
+    "rgb(0, 0, 0)",
     "#111111",
     "#3EB371",
     "#3EB371",
     "#3EB371",
+    "rgb(12, 20, 16)",
+
   ],
   oceanic: [
-    "#002233",
+    "rgb(0, 34, 51)",
     "#004555",
     "rgba(0, 170, 255, 0.7)",
     "#88ccff",
@@ -94,20 +92,20 @@ const colorThemes = {
     "#0081c1",
   ],
   shadow: [
-    "#1c1c1c",
+    "rgb(73, 75, 84)", 
     "#333333",
-    "rgba(189, 189, 189, 0.7)",
+    "rgba(152, 135, 135, 0.7)",
     "#e0e0e0",
     "#bdbdbd",
-    "#909090",
+    "rgb(39, 41, 48)",
   ],
   gaming: [
-    "#1a1a1a",
+    "rgb(26, 26, 26)",
     "#333333",
     "rgba(255, 69, 0, 0.7)",
     "#ff9e80",
     "#ff4500",
-    "rgba(161, 48, 6, 0.7)",
+    "rgb(26, 26, 26)",
   ],
   galaxy: [
     "#1c0033",
@@ -116,6 +114,7 @@ const colorThemes = {
     "#c3a6ff",
     "#8a2be2",
     "#4c008a",
+    "#1c0033",
   ],
   cyberpunk: [
     "#1a001a",
@@ -123,14 +122,16 @@ const colorThemes = {
     "rgba(255, 0, 255, 0.7)",
     "#ff80ff",
     "#ff00ff",
+    "#1a001a",
   ],
-  techno: [
+  emerald: [
     "#001f1f",
     "#003333",
     "rgba(0, 255, 255, 0.7)",
     "#80ffff",
     "#00ffff",
-  ]
+    "#001f1f",
+  ],
 };
 //primary
 //secondary
@@ -210,6 +211,22 @@ function ABCloak(redirectToEducationalSite) {
 if (localStorage.getItem("autoAB") == "true") {
   ABCloak(true);
 }
+function panic() {
+  if (!Boolean(localStorage.chosenRedirect)) {
+  //fallback redirect
+    localStorage.chosenRedirect = 'https://classroom.google.com'
+}
+window.top.location.href = localStorage.chosenRedirect; 
+}
+// init panic listener
+if (Boolean(localStorage.panicBool )) {
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.key === 'g') {
+    event.preventDefault(); 
+    panic()
+  }
+});
+}
 
 try {
   navigator.serviceWorker.register(stockSW || "/uv/sw.js", {
@@ -219,7 +236,7 @@ try {
 
 try {
   if (sessionStorage.getItem("firstVisit") === null) {
-    setTimeout(showPage, 2500);
+    setTimeout(showPage, 2200);
     sessionStorage.setItem("firstVisit", "false");
   } else {
     showPage();
@@ -255,7 +272,10 @@ function loadColorTheme() {
   );
   document.documentElement.style.setProperty("--h1", colorThemes[theme][3]);
   document.documentElement.style.setProperty("--text", colorThemes[theme][4]);
-  document.documentElement.style.setProperty("--bgline", colorThemes[theme][5]);
+  document.documentElement.style.setProperty(
+    "--gradient",
+    colorThemes[theme][5]
+  );
 }
 
 loadColorTheme();

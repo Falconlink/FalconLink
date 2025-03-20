@@ -14,7 +14,7 @@
 <body>
     <script src="index.js" defer></script>
 
-    <div class="w3-display-container" style="background-color: var(--secondary); padding: 10px; height: 80px;">
+    <div class="w3-display-container" style="background-color: rgba(0, 2, 16, 0.203); padding: 10px; height: 80px;">
         <a href="/" class="w3-display-left"><img class="navbar-logo" src="/falconlink_logo.png"></a>
 
         <div class="w3-display-right">
@@ -35,9 +35,18 @@
                 document.getElementById("autoABToggle").innerHTML = localStorage.getItem('autoAB') == 'true' ? 'Disable' : 'Enable';
             </script>
         </div>
-
         <div class="settingDiv">
-            <p class="settingTitle">Open Cloaked </p>
+            <p class="settingTitle">Panic Button (ctrl+g)</p>
+            <div class="dropdown">
+                <button class="dropbtn">Selector</button>
+                <div class="dropdown-content" id="panic-selection">
+                    <a onclick="localStorage.removeItem('panicBool')">Off</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="settingDiv ">
+            <p class="settingTitle ">Open Cloaked </p>
             <button id="ABCloakButton" onclick="if(inIframe) { window.top.postMessage('cancelABCloak', '*') } else { ABCloak(false) }" class="settingButton">Activate</button>
             <script>
                 document.getElementById("ABCloakButton").innerHTML = inIframe ? 'Deactivate' : 'Activate';
@@ -50,7 +59,6 @@
                 <div class="dropdown-content">
                     <a onclick="setColorTheme('default')">Default</a>
                     <a onclick="setColorTheme('legacy')">Classic</a>
-                    <a onclick="setColorTheme('strawberry')">Strawberry</a>
                     <a onclick="setColorTheme('cafe')">Cafe</a>
                     <a onclick="setColorTheme('retro')">Retro</a>
                     <a onclick="setColorTheme('noctura')">Noctura</a>
@@ -60,7 +68,7 @@
                     <a onclick="setColorTheme('gaming')">Gaming</a>
                     <a onclick="setColorTheme('galaxy')">Galaxy</a>
                     <a onclick="setColorTheme('cyberpunk')">Cyberpunk</a>
-                    <a onclick="setColorTheme('techno')">Techno</a>
+                    <a onclick="setColorTheme('emerald')">Emerald</a>
                 </div>
             </div>
 
@@ -82,8 +90,8 @@
 
     </div>
 <div class="footer">
-    <p class="general" onclick="location.href = '../privacypolicy';">Privacy Policy</p>
-    <p class="general" onclick="location.href = '/discord'">Contact Us</p>
+    <p class="footeritems" onclick="location.href = '../privacypolicy';">Privacy Policy</p>
+    <p class="footeritems" onclick="location.href = '/discord'">Contact Us</p>
 </div>
 </body>
 

@@ -6,7 +6,7 @@
 }
 
 body {
-  background-color: var(--primary);
+  background: linear-gradient(50deg, var(--primary), 70%, var(--gradient));
 }
 
 html,
