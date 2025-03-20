@@ -6,9 +6,20 @@
 }
 
 body {
-  background-color: var(--primary);
+  background: linear-gradient(50deg, var(--primary), 70%, var(--gradient));
+
 }
 
+@keyframes load {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
 html,
 body {
   height: 100%;
@@ -57,7 +68,9 @@ body {
   margin: 0px;
   margin-bottom: 5vh;
   color: var(--h1);
-  transition: .5s linear;
+  transition: 0.5s linear;
+  animation: load 0.6s ease-out;
+
 }
 .title:hover {
   text-shadow: 0 0 10px var(--h1), 0 0 20px var(--h1), 0 0 40px var(--h1);
@@ -66,8 +79,6 @@ body {
   margin: 0;
   margin-bottom: 15px;
   font-size: 25px;
-}
-.subtitle {
   color: var(--text);
   position: relative;
   font-family: sans-serif;
@@ -83,6 +94,7 @@ body {
   background-repeat: no-repeat;
   background-size: 80%;
   animation: shine 4s linear forwards;
+  
 }
 
 @keyframes shine {
@@ -97,6 +109,8 @@ body {
   }
   100% {
     background-position: 500%;
+    background-size: 80%;
+
   }
 }
 .w3-input {
