@@ -19,7 +19,7 @@ function toggle() {
 function openEruda() {
     const iframe = document.getElementById("uv-frame");
     el = document.createElement("script")
-    el.src = "/eruda.js";
+    el.src = "/tab/eruda.js";
     iframe.contentDocument.body.append(el);
 }
 
