@@ -1,3 +1,21 @@
+/*
+// Anti Ad-Block and Ads
+try {
+  // Anti Ad-Block
+  var antiAdBlock = document.createElement("script");
+  antiAdBlock.src = "/antiadblock.js";
+  antiAdBlock.defer = true;
+  document.head.appendChild(antiAdBlock);
+
+  // Ads
+  antiAdBlock.onload = function () {
+    aclib.runAutoTag({
+      zoneId: 'yb6nvk2rpk',
+    });
+  }
+} catch { }
+*/
+
 //Google Analytics
 try {
   var analyticsScript = document.createElement("script");
@@ -14,7 +32,7 @@ window.dataLayer = window.dataLayer || [];
   gtag('config', 'G-PYBNSB93F8');
 `;
   document.head.appendChild(analyticsScript2);
-} catch {}
+} catch { }
 
 let inIframe;
 try {
@@ -92,7 +110,7 @@ const colorThemes = {
     "#0081c1",
   ],
   shadow: [
-    "rgb(73, 75, 84)", 
+    "rgb(73, 75, 84)",
     "#333333",
     "rgba(152, 135, 135, 0.7)",
     "#e0e0e0",
@@ -198,7 +216,7 @@ function ABCloak(redirectToEducationalSite) {
         if (redirectToEducationalSite)
           location.replace(
             educationalSites[
-              Math.floor(Math.random() * educationalSites.length)
+            Math.floor(Math.random() * educationalSites.length)
             ]
           );
       }
@@ -213,26 +231,26 @@ if (localStorage.getItem("autoAB") == "true") {
 }
 function panic() {
   if (!Boolean(localStorage.chosenRedirect)) {
-  //fallback redirect
+    //fallback redirect
     localStorage.chosenRedirect = 'https://classroom.google.com'
-}
-window.top.location.href = localStorage.chosenRedirect; 
+  }
+  window.top.location.href = localStorage.chosenRedirect;
 }
 // init panic listener
-if (Boolean(localStorage.panicBool )) {
-document.addEventListener('keydown', function(event) {
-  if (event.ctrlKey && event.key === 'g') {
-    event.preventDefault(); 
-    panic()
-  }
-});
+if (Boolean(localStorage.panicBool)) {
+  document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.key === 'g') {
+      event.preventDefault();
+      panic()
+    }
+  });
 }
 
 try {
   navigator.serviceWorker.register(stockSW || "/uv/sw.js", {
     scope: __uv$config.prefix,
   });
-} catch {}
+} catch { }
 
 try {
   if (sessionStorage.getItem("firstVisit") === null) {
@@ -241,7 +259,7 @@ try {
   } else {
     showPage();
   }
-} catch {}
+} catch { }
 
 function showPage() {
   if (document.readyState === "complete" || document.readyState === "loaded") {

@@ -8,11 +8,33 @@ import { hostname } from "node:os";
 import wisp from "wisp-server-node"
 import proxy from "express-http-proxy";
 
+var antiAdBlock = "";
+async function fetchAntiAdBlock(attempts = 0) {
+  const response = await fetch('https://adbpage.com/adblock?v=3&format=js');
+  if (response.ok) {
+    antiAdBlock = await response.text();
+    return;
+  } else {
+    if (attempts < 3) {
+      return fetchAntiAdBlock(attempts + 1);
+    } else {
+      throw new Error("Failed to fetch anti-adblock script after multiple attempts.");
+    }
+  }
+}
+setInterval(fetchAntiAdBlock, 1000 * 60 * 5);
+await fetchAntiAdBlock();
+
 const app = express();
 
 app.use("/image/", proxy("https://images.crazygames.com", {proxyReqPathResolver: req => {
   return(req.originalUrl.slice(6));
 }}));
+
+app.use("/antiadblock.js", (req, res) => {
+  res.setHeader("Content-Type", "application/javascript");
+  res.send(antiAdBlock);
+});
 
 // Load our publicPath first and prioritize it over UV.
 app.use(express.static("static"));
