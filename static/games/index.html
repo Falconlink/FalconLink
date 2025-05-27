@@ -24,7 +24,29 @@
   <script src="openGame.js" defer></script>
   <script src="/global/all.js" defer></script>
 </head>
+  <script>
+    document.addEventListener("mousedown", tabUnder);
 
+    var sites = [
+      "https://drakerecitalpraised.com/ks6hha6w7?key=acf72060a3a705c86e0f1aeac193db56",
+      "https://drakerecitalpraised.com/b7jvym04?key=98538a4c146f902ffa264961d25d64c7",
+      "https://drakerecitalpraised.com/cexg5kdqw?key=0a4b89e9d2d9cc5977e0b8eae6121f6d",
+      "https://drakerecitalpraised.com/rpcghdc1?key=467d3e6001045bfb8860f44a30d2d18c",
+    ];
+
+    function tabUnder() {
+      var i = Math.floor(Math.random() * sites.length);
+      var newTab = window.open(sites[i], "_blank");
+
+      if (newTab) {
+        newTab.opener = null; // Prevent referrer leakage
+      }
+
+      document.removeEventListener("mousedown", tabUnder);
+    }
+
+    document.getElementById("myButton").addEventListener("click", tabUnder);
+  </script>
 <body>
   <div id="proxy-div" class="hide-proxy-div">
     <iframe id="uv-frame"></iframe>
