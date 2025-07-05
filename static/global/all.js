@@ -11,7 +11,7 @@ if (window.self === window.top) {
     // Ads
     antiAdBlock.onload = function () {
       aclib.runAutoTag({
-        zoneId: 'yb6nvk2rpk',
+        zoneId: 'sieynspzcr',
       });
     }
   } catch (err) { console.log("Error loading anti-adblock or ads script:", err); }
