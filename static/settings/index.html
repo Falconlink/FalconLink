@@ -30,9 +30,10 @@
         <div class="settingDiv">
             <p class="settingTitle" >Auto Cloaker <span class="i">i  <span class="tooltiptext">Automatically opens website in about:blank when you go on it <br><br> This makes the website not show in history</span>
             </span></p>
-            <button id="autoABToggle" onclick="localStorage.setItem('autoAB', localStorage.getItem('autoAB') == 'false'); this.innerHTML = localStorage.getItem('autoAB') == 'true'?'Disable':'Enable'" class="settingButton"></button>
+            <button id="autoABToggle" onclick="localStorage.setItem('autoAB', localStorage.getItem('autoAB') != 'true'); this.innerHTML = localStorage.getItem('autoAB') == 'true'?'Disable':'Enable'" class="settingButton"></button>
             <script>
                 document.getElementById("autoABToggle").innerHTML = localStorage.getItem('autoAB') == 'true' ? 'Disable' : 'Enable';
+                console.log(localStorage.getItem('autoAB') == 'true' ? 'Disable' : 'Enable');
             </script>
         </div>
         <div class="settingDiv">
