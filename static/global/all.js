@@ -43,7 +43,15 @@ try {
   inIframe = true;
 }
 const educationalSites = [
-  "https://drakerecitalpraised.com/rpcghdc1?key=467d3e6001045bfb8860f44a30d2d18c",
+  "https://blooket.com",
+  "https://kahoot.it",
+  "https://joinmyquiz.com",
+  "https://deltamath.com",
+  "https://quizlet.com",
+  "https://drive.google.com",
+  "https://docs.google.com",
+  "https://forms.google.com",
+  "https://classroom.google.com",
 ];
 const colorThemes = {
   default: [
@@ -233,7 +241,7 @@ function panic() {
 // init panic listener
 if (Boolean(localStorage.panicBool)) {
   document.addEventListener('keydown', function (event) {
-    if (event.ctrlKey && event.key === 'g') {
+    if (event.ctrlKey && event.key === '.') {
       event.preventDefault();
       panic()
     }
