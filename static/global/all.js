@@ -1,20 +1,22 @@
-/*
-// Anti Ad-Block and Ads
-try {
-  // Anti Ad-Block
-  var antiAdBlock = document.createElement("script");
-  antiAdBlock.src = "/antiadblock.js";
-  antiAdBlock.defer = true;
-  document.head.appendChild(antiAdBlock);
 
-  // Ads
-  antiAdBlock.onload = function () {
-    aclib.runAutoTag({
-      zoneId: 'yb6nvk2rpk',
-    });
-  }
-} catch { }
-*/
+// Anti Ad-Block and Ads
+if (window.self === window.top) {
+  try {
+    // Anti Ad-Block
+    var antiAdBlock = document.createElement("script");
+    antiAdBlock.src = "/antiadblock.js";
+    antiAdBlock.defer = true;
+    document.head.appendChild(antiAdBlock);
+
+    // Ads
+    antiAdBlock.onload = function () {
+      aclib.runAutoTag({
+        zoneId: 'yb6nvk2rpk',
+      });
+    }
+  } catch (err) { console.log("Error loading anti-adblock or ads script:", err); }
+}
+
 
 //Google Analytics
 try {
